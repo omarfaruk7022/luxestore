@@ -26,6 +26,8 @@ export default function CartDrawer() {
 
   // const items = cart?.items || [];
 
+
+  console.log(items)
   return (
     <AnimatePresence>
       {isOpen && (
@@ -133,7 +135,7 @@ export default function CartDrawer() {
                       <div className="flex items-center gap-2 mt-2">
                         <button
                           onClick={() =>
-                            updateItem(item._id, item.quantity - 1)
+                            updateItem(item.variantId, item.quantity - 1)
                           }
                           className="w-6 h-6 rounded-full border flex items-center justify-center hover:bg-secondary transition-colors"
                         >
@@ -144,14 +146,14 @@ export default function CartDrawer() {
                         </span>
                         <button
                           onClick={() =>
-                            updateItem(item._id, item.quantity + 1)
+                            updateItem(item.variantId, item.quantity + 1)
                           }
                           className="w-6 h-6 rounded-full border flex items-center justify-center hover:bg-secondary transition-colors"
                         >
                           <Plus size={10} />
                         </button>
                         <button
-                          onClick={() => removeItem(item._id)}
+                          onClick={() => removeItem(item.variantId)}
                           className="ml-auto p-1 rounded hover:text-destructive transition-colors"
                         >
                           <Trash2 size={14} />
