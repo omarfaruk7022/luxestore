@@ -82,6 +82,15 @@ export default function CheckoutPage() {
     }
   }, [router]);
 
+  const handleContinue = () => {
+    const isValid = Object.values(address).every((v) => v.trim() !== "");
+
+    if (!isValid) {
+      toast.error("Please fill all address fields");
+      return;
+    }
+    setStep(2);
+  };
   const handlePlaceOrder = async () => {
     if (
       !address.fullName ||
@@ -128,7 +137,7 @@ export default function CheckoutPage() {
             <div key={label} className="flex items-center gap-3">
               <button
                 onClick={() => i + 1 < step && setStep(i + 1)}
-                className={`flex items-center gap-2 text-sm font-medium transition-colors ${step === i + 1 ? "text-foreground" : step > i + 1 ? "text-accent" : "text-muted-foreground"}`}
+                className={`flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer ${step === i + 1 ? "text-foreground" : step > i + 1 ? "text-accent" : "text-muted-foreground"}`}
               >
                 <span
                   className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${step === i + 1 ? "bg-foreground text-background" : step > i + 1 ? "bg-accent text-white" : "bg-secondary"}`}
@@ -190,7 +199,7 @@ export default function CheckoutPage() {
                         <button
                           key={id}
                           onClick={() => setShippingMethod(id)}
-                          className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all ${shippingMethod === id ? "border-foreground ring-1 ring-foreground bg-secondary/50" : "hover:bg-secondary/50"}`}
+                          className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer ${shippingMethod === id ? "border-foreground ring-1 ring-foreground bg-secondary/50" : "hover:bg-secondary/50"}`}
                         >
                           <div
                             className={`w-10 h-10 rounded-lg flex items-center justify-center ${shippingMethod === id ? "bg-foreground text-background" : "bg-secondary"}`}
@@ -213,8 +222,8 @@ export default function CheckoutPage() {
                 </div>
 
                 <button
-                  onClick={() => setStep(2)}
-                  className="w-full py-4 rounded-2xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity"
+                  onClick={handleContinue}
+                  className="w-full py-4 rounded-2xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity cursor-pointer"
                 >
                   Continue to Payment
                 </button>
@@ -235,7 +244,7 @@ export default function CheckoutPage() {
                       <button
                         key={id}
                         onClick={() => setPaymentMethod(id)}
-                        className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all ${paymentMethod === id ? "border-foreground ring-1 ring-foreground bg-secondary/50" : "hover:bg-secondary/50"}`}
+                        className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer ${paymentMethod === id ? "border-foreground ring-1 ring-foreground bg-secondary/50" : "hover:bg-secondary/50"}`}
                       >
                         <div
                           className={`w-10 h-10 rounded-lg flex items-center justify-center ${paymentMethod === id ? "bg-foreground text-background" : "bg-secondary"}`}
@@ -251,13 +260,13 @@ export default function CheckoutPage() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setStep(1)}
-                    className="flex-1 py-4 rounded-2xl border font-medium hover:bg-secondary transition-colors"
+                    className="flex-1 py-4 rounded-2xl border font-medium hover:bg-secondary transition-colors cursor-pointer"
                   >
                     Back
                   </button>
                   <button
                     onClick={() => setStep(3)}
-                    className="flex-1 py-4 rounded-2xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity"
+                    className="flex-1 py-4 rounded-2xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity cursor-pointer"
                   >
                     Review Order
                   </button>
@@ -337,14 +346,14 @@ export default function CheckoutPage() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setStep(2)}
-                    className="flex-1 py-4 rounded-2xl border font-medium hover:bg-secondary transition-colors"
+                    className="flex-1 py-4 rounded-2xl border font-medium hover:bg-secondary transition-colors cursor-pointer"
                   >
                     Back
                   </button>
                   <button
                     onClick={handlePlaceOrder}
                     disabled={isSubmitting}
-                    className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                    className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
                   >
                     <Lock size={16} />
                     {isSubmitting ? "Placing Order..." : "Place Order"}
