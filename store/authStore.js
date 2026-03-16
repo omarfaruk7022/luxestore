@@ -13,7 +13,7 @@ const useAuthStore = create(
       setAuth: (user, token) => {
         if (typeof window !== "undefined") {
           localStorage.setItem("luxe_token", token);
-          document.cookie = `token=${token}; path=/; max-age=${7 * 24 * 60 * 60}`;
+          document.cookie = `token=${token}; path=/; max-age=${7 * 24 * 60 * 60}; Secure; SameSite=Lax`;
         }
         set({ user, token });
       },
@@ -22,10 +22,12 @@ const useAuthStore = create(
         if (typeof window !== "undefined") {
           localStorage.removeItem("luxe_token");
           localStorage.removeItem("luxe_user");
-          document.cookie = "token=; path=/; max-age=0";
+          document.cookie =
+            "token=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         }
         set({ user: null, token: null });
         toast.success("Logged out successfully");
+        window.location.href = "/";
       },
 
       register: async (data) => {

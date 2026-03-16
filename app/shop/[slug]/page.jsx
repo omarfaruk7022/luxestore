@@ -118,6 +118,7 @@ export default function ProductDetailPage() {
     }
 
     await addItem({
+      name: product.name,
       productId: product._id,
       variantId: currentVariant._id,
       size: selectedSize,
@@ -196,7 +197,7 @@ export default function ProductDetailPage() {
                   key={i}
                   onClick={() => setSelectedImage(i)}
                   className={cn(
-                    "relative aspect-square rounded-xl overflow-hidden border-2 transition-all",
+                    "relative aspect-square rounded-xl overflow-hidden border-2 transition-all cursor-pointer",
                     selectedImage === i
                       ? "border-foreground"
                       : "border-transparent opacity-70 hover:opacity-100",
@@ -284,7 +285,7 @@ export default function ProductDetailPage() {
                       setSelectedVariant(null);
                     }}
                     className={cn(
-                      "flex items-center gap-2 px-3 py-2 rounded-xl border text-sm transition-all",
+                      "flex items-center gap-2 px-3 py-2 rounded-xl border text-sm transition-all cursor-pointer",
                       selectedColor === v.color
                         ? "border-foreground ring-1 ring-foreground"
                         : "hover:border-foreground/50",
@@ -322,7 +323,7 @@ export default function ProductDetailPage() {
                       onClick={() => available && setSelectedSize(size)}
                       disabled={!available || !inStock}
                       className={cn(
-                        "w-12 h-12 rounded-xl border text-sm font-medium transition-all",
+                        "w-12 h-12 rounded-xl border text-sm font-medium transition-all cursor-pointer",
                         selectedSize === size
                           ? "bg-foreground text-background border-foreground"
                           : "",
@@ -372,13 +373,13 @@ export default function ProductDetailPage() {
               <button
                 onClick={handleAddToCart}
                 disabled={product.totalStock === 0}
-                className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity disabled:opacity-40"
+                className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity disabled:opacity-40 cursor-pointer"
               >
                 <ShoppingBag size={18} />
                 {product.totalStock === 0 ? "Out of Stock" : "Add to Cart"}
               </button>
               <button
-                className="w-14 h-14 rounded-2xl border flex items-center justify-center hover:bg-secondary transition-colors"
+                className="w-14 h-14 rounded-2xl border flex items-center justify-center hover:bg-secondary transition-colors cursor-pointer"
                 onClick={handleAddToWishlist}
               >
                 <Heart size={18} />

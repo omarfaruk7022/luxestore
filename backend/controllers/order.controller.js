@@ -13,10 +13,19 @@ export const createOrder = async (req) => {
   try {
     await connectDB();
     const body = await req.json();
-    const { items, shippingAddress, shippingMethod = 'standard', paymentMethod, notes } = body;
+    const {
+      items,
+      shippingAddress,
+      shippingMethod = "standard",
+      paymentMethod,
+      notes,
+    } = body;
 
     if (!items || items.length === 0) {
-      return NextResponse.json({ success: false, message: 'Cart is empty' }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "Cart is empty" },
+        { status: 400 },
+      );
     }
 
     const orderItems = [];
@@ -25,15 +34,23 @@ export const createOrder = async (req) => {
     for (const item of items) {
       const product = await Product.findById(item.productId);
       if (!product) {
-        return NextResponse.json({ success: false, message: `Product not found` }, { status: 404 });
+        return NextResponse.json(
+          { success: false, message: `Product not found` },
+          { status: 404 },
+        );
       }
 
-      const variant = product.variants.find((v) => v._id.toString() === item.variantId.toString());
+      const variant = product.variants.find(
+        (v) => v._id.toString() === item.variantId.toString(),
+      );
       if (!variant || variant.stock < item.quantity) {
-        return NextResponse.json({
-          success: false,
-          message: `Insufficient stock for ${product.name} (${variant?.size}/${variant?.color})`,
-        }, { status: 400 });
+        return NextResponse.json(
+          {
+            success: false,
+            message: `Insufficient stock for ${product.name} (${variant?.size}/${variant?.color})`,
+          },
+          { status: 400 },
+        );
       }
 
       variant.stock -= item.quantity;
@@ -70,13 +87,19 @@ export const createOrder = async (req) => {
       total,
       paymentMethod,
       notes,
-      statusHistory: [{ status: 'placed', note: 'Order placed successfully' }],
+      statusHistory: [{ status: "placed", note: "Order placed successfully" }],
     });
 
-    await order.populate('user', 'name email');
-    return NextResponse.json({ success: true, message: 'Order placed successfully', order }, { status: 201 });
+    await order.populate("user", "name email");
+    return NextResponse.json(
+      { success: true, message: "Order placed successfully", order },
+      { status: 201 },
+    );
   } catch (error) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 500 },
+    );
   }
 };
 
@@ -135,10 +158,16 @@ export const getOrder = async (req, id) => {
 // @route   PUT /api/orders/:id/cancel
 // @access  Private
 export const cancelOrder = async (req, id) => {
+    console.log("1.  starting");
+
   try {
+    console.log("1. connecting db");
     await connectDB();
-    const body = await req.json();
+    console.log("2. parsing body");
+    const body = await req.json().catch(() => ({}));
+    console.log("3. finding order", id);
     const order = await Order.findOne({ _id: id, user: req.user._id });
+    console.log("4. order found", order);
     if (!order)
       return NextResponse.json(
         { success: false, message: "Order not found" },

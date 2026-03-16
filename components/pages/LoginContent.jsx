@@ -22,7 +22,10 @@ export default function LoginContent() {
     const result = await login(form);
 
     if (result.success) {
-      router.push(redirect || "/");
+      const dest = redirect || "/";
+      setTimeout(() => {
+        window.location.href = dest;
+      }, 300);
     }
   };
 
@@ -62,7 +65,7 @@ export default function LoginContent() {
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   placeholder="you@example.com"
-                  className="w-full pl-11 pr-4 py-3 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border bg-background text-sm outline-none focus:ring-0"
                 />
               </div>
             </div>
@@ -84,7 +87,7 @@ export default function LoginContent() {
                     setForm({ ...form, password: e.target.value })
                   }
                   placeholder="Min. 6 characters"
-                  className="w-full pl-11 pr-12 py-3 rounded-xl border bg-background text-sm outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full pl-11 pr-12 py-3 rounded-xl border bg-background text-sm outline-none focus:ring-0"
                 />
                 <button
                   type="button"
@@ -99,7 +102,7 @@ export default function LoginContent() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-foreground text-background font-medium hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
             >
               {isLoading ? "Signing in..." : "Sign In"}
               {!isLoading && <ArrowRight size={16} />}
@@ -119,7 +122,7 @@ export default function LoginContent() {
           </div>
 
           {/* Demo credentials */}
-          <div className="mt-6 p-4 rounded-xl bg-secondary text-xs space-y-1">
+          {/* <div className="mt-6 p-4 rounded-xl bg-secondary text-xs space-y-1">
             <p className="font-medium">Demo accounts:</p>
             <p className="text-muted-foreground">
               Admin: admin@luxestore.com / admin123
@@ -127,7 +130,7 @@ export default function LoginContent() {
             <p className="text-muted-foreground">
               User: jane@example.com / user1234
             </p>
-          </div>
+          </div> */}
         </motion.div>
       </div>
     </div>

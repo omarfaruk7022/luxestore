@@ -137,7 +137,7 @@ export default function CartDrawer() {
                           onClick={() =>
                             updateItem(item.variantId, item.quantity - 1)
                           }
-                          className="w-6 h-6 rounded-full border flex items-center justify-center hover:bg-secondary transition-colors"
+                          className="w-6 h-6 rounded-full border flex items-center justify-center hover:bg-secondary transition-colors cursor-pointer"
                         >
                           <Minus size={10} />
                         </button>
@@ -148,13 +148,13 @@ export default function CartDrawer() {
                           onClick={() =>
                             updateItem(item.variantId, item.quantity + 1)
                           }
-                          className="w-6 h-6 rounded-full border flex items-center justify-center hover:bg-secondary transition-colors"
+                          className="w-6 h-6 rounded-full border flex items-center justify-center hover:bg-secondary transition-colors cursor-pointer"
                         >
                           <Plus size={10} />
                         </button>
                         <button
                           onClick={() => removeItem(item.variantId)}
-                          className="ml-auto p-1 rounded hover:text-destructive transition-colors"
+                          className="ml-auto p-1 rounded hover:text-destructive transition-colors cursor-pointer"
                         >
                           <Trash2 size={14} />
                         </button>
