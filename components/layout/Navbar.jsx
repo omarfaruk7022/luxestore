@@ -149,12 +149,14 @@ export default function Navbar() {
                       <div className="p-1">
                         <Link
                           href="/account"
+                          onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary transition-colors "
                         >
                           My Account
                         </Link>
                         <Link
                           href="/account/orders"
+                          onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary transition-colors"
                         >
                           My Orders
@@ -162,6 +164,7 @@ export default function Navbar() {
                         {isAdmin() && (
                           <Link
                             href="/admin"
+                            onClick={() => setDropdownOpen(false)}
                             className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary transition-colors text-accent"
                           >
                             Admin Panel
