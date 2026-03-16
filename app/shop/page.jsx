@@ -1,9 +1,9 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { SlidersHorizontal, X, ChevronDown, Grid3X3, List } from "lucide-react";
+import { SlidersHorizontal, X, ChevronDown } from "lucide-react";
 import { productApi, categoryApi } from "@/lib/api";
 import ProductCard from "@/components/shop/ProductCard";
 import CartDrawer from "@/components/cart/CartDrawer";
@@ -17,9 +17,103 @@ const SORT_OPTIONS = [
   { label: "Top Rated", value: "-rating" },
 ];
 
+function FilterContent({
+  selectedCategory,
+  setSelectedCategory,
+  selectedSizes,
+  toggleSize,
+  priceRange,
+  setPriceRange,
+  categories,
+  setPage,
+  clearFilters,
+  hasActiveFilters,
+}) {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold">Filters</h3>
+        {hasActiveFilters && (
+          <button
+            onClick={clearFilters}
+            className="text-xs text-accent hover:underline flex items-center gap-1 cursor-pointer"
+          >
+            <X size={12} /> Clear all
+          </button>
+        )}
+      </div>
+
+      {/* Category */}
+      <div>
+        <h4 className="text-sm font-medium mb-3">Category</h4>
+        <div className="space-y-2">
+          <button
+            onClick={() => {
+              setSelectedCategory("");
+              setPage(1);
+            }}
+            className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors cursor-pointer ${!selectedCategory ? "bg-foreground text-background" : "hover:bg-secondary"}`}
+          >
+            All Products
+          </button>
+          {(categories || []).map((cat) => (
+            <button
+              key={cat._id}
+              onClick={() => {
+                setSelectedCategory(cat.slug);
+                setPage(1);
+              }}
+              className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors cursor-pointer ${selectedCategory === cat.slug ? "bg-foreground text-background" : "hover:bg-secondary"}`}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Size */}
+      <div>
+        <h4 className="text-sm font-medium mb-3">Size</h4>
+        <div className="flex flex-wrap gap-2">
+          {SIZES.map((size) => (
+            <button
+              key={size}
+              onClick={() => toggleSize(size)}
+              className={`px-3 py-1.5 text-xs rounded-lg border font-medium transition-colors cursor-pointer ${selectedSizes.includes(size) ? "bg-foreground text-background border-foreground" : "hover:bg-secondary"}`}
+            >
+              {size}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Price */}
+      <div>
+        <h4 className="text-sm font-medium mb-3">Price Range</h4>
+        <div className="space-y-2">
+          <input
+            type="range"
+            min={0}
+            max={5000}
+            step={50}
+            value={priceRange[1]}
+            onChange={(e) =>
+              setPriceRange([priceRange[0], Number(e.target.value)])
+            }
+            className="w-full accent-foreground cursor-pointer"
+          />
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>৳{priceRange[0]}</span>
+            <span>৳{priceRange[1]}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ShopContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(
@@ -29,7 +123,7 @@ function ShopContent() {
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [sort, setSort] = useState(searchParams.get("sort") || "-createdAt");
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [search] = useState(searchParams.get("search") || "");
 
   const params = {
     page,
@@ -78,6 +172,19 @@ function ShopContent() {
     priceRange[0] > 0 ||
     priceRange[1] < 5000;
 
+  const filterProps = {
+    selectedCategory,
+    setSelectedCategory,
+    selectedSizes,
+    toggleSize,
+    priceRange,
+    setPriceRange,
+    categories,
+    setPage,
+    clearFilters,
+    hasActiveFilters,
+  };
+
   return (
     <div className="min-h-screen pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
@@ -99,7 +206,6 @@ function ShopContent() {
             )}
           </div>
           <div className="flex items-center gap-3">
-            {/* Sort */}
             <div className="relative">
               <select
                 value={sort}
@@ -120,8 +226,6 @@ function ShopContent() {
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
               />
             </div>
-
-            {/* Filter toggle */}
             <button
               onClick={() => setFiltersOpen(!filtersOpen)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors cursor-pointer ${filtersOpen ? "bg-foreground text-background" : "bg-card hover:bg-secondary"}`}
@@ -136,7 +240,7 @@ function ShopContent() {
         </div>
 
         <div className="flex gap-8">
-          {/* Sidebar filters */}
+          {/* Desktop Sidebar */}
           <AnimatePresence>
             {filtersOpen && (
               <motion.aside
@@ -144,86 +248,10 @@ function ShopContent() {
                 animate={{ width: 260, opacity: 1 }}
                 exit={{ width: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="shrink-0 overflow-hidden"
+                className="shrink-0 overflow-hidden hidden md:block"
               >
-                <div className="w-64 space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold">Filters</h3>
-                    {hasActiveFilters && (
-                      <button
-                        onClick={clearFilters}
-                        className="text-xs text-accent hover:underline flex items-center gap-1 cursor-pointer"
-                      >
-                        <X size={12} /> Clear all
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Category */}
-                  <div>
-                    <h4 className="text-sm font-medium mb-3">Category</h4>
-                    <div className="space-y-2">
-                      <button
-                        onClick={() => {
-                          setSelectedCategory("");
-                          setPage(1);
-                        }}
-                        className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors cursor-pointer ${!selectedCategory ? "bg-foreground text-background" : "hover:bg-secondary"}`}
-                      >
-                        All Products
-                      </button>
-                      {(categories || []).map((cat) => (
-                        <button
-                          key={cat._id}
-                          onClick={() => {
-                            setSelectedCategory(cat.slug);
-                            setPage(1);
-                          }}
-                          className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors cursor-pointer ${selectedCategory === cat.slug ? "bg-foreground text-background" : "hover:bg-secondary"}`}
-                        >
-                          {cat.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Size */}
-                  <div>
-                    <h4 className="text-sm font-medium mb-3">Size</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {SIZES.map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => toggleSize(size)}
-                          className={`px-3 py-1.5 text-xs rounded-lg border font-medium transition-colors cursor-pointer ${selectedSizes.includes(size) ? "bg-foreground text-background border-foreground" : "hover:bg-secondary"}`}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Price */}
-                  <div>
-                    <h4 className="text-sm font-medium mb-3">Price Range</h4>
-                    <div className="space-y-2">
-                      <input
-                        type="range"
-                        min={0}
-                        max={5000}
-                        step={50}
-                        value={priceRange[1]}
-                        onChange={(e) =>
-                          setPriceRange([priceRange[0], Number(e.target.value)])
-                        }
-                        className="w-full accent-foreground cursor-pointer"
-                      />
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>৳{priceRange[0]}</span>
-                        <span>৳{priceRange[1]}</span>
-                      </div>
-                    </div>
-                  </div>
+                <div className="w-64">
+                  <FilterContent {...filterProps} />
                 </div>
               </motion.aside>
             )}
@@ -260,18 +288,18 @@ function ShopContent() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div
+                  className={`grid gap-4 ${filtersOpen ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"}`}
+                >
                   {products.map((product, i) => (
                     <ProductCard
                       key={product._id}
                       product={product}
                       index={i}
-                      filtersOpen={filtersOpen}
                     />
                   ))}
                 </div>
 
-                {/* Pagination */}
                 {pagination && pagination.pages > 1 && (
                   <div className="flex items-center justify-center gap-2 mt-12">
                     <button
@@ -309,6 +337,38 @@ function ShopContent() {
           </div>
         </div>
       </div>
+
+      {/* Mobile filter drawer */}
+      <AnimatePresence>
+        {filtersOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 bg-black/50 md:hidden"
+              onClick={() => setFiltersOpen(false)}
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 300 }}
+              className="fixed bottom-0 left-0 right-0 z-50 bg-card rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto md:hidden"
+            >
+              <div className="w-12 h-1 rounded-full bg-border mx-auto mb-6" />
+              <FilterContent {...filterProps} />
+              <button
+                onClick={() => setFiltersOpen(false)}
+                className="w-full mt-6 py-3 rounded-xl bg-foreground text-background text-sm font-medium"
+              >
+                Apply Filters
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       <CartDrawer />
     </div>
   );

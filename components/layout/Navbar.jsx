@@ -31,6 +31,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const { user, logout, isAuthenticated, isAdmin } = useAuthStore();
@@ -127,48 +128,54 @@ export default function Navbar() {
               {/* User */}
               {isAuthenticated() ? (
                 <div className="relative group">
-                  <button className="p-2 rounded-full hover:bg-secondary transition-colors flex items-center gap-1 cursor-pointer">
+                  <button
+                    className="p-2 rounded-full hover:bg-secondary transition-colors flex items-center gap-1 cursor-pointer"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                  >
                     <User size={18} />
-                    <ChevronDown size={12} className="hidden md:block" />
+                    <ChevronDown size={12} className="" />
                   </button>
-                  <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border bg-card shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                    <div className="p-3 border-b">
-                      <p className="text-sm font-medium truncate">
-                        {user?.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {user?.email}
-                      </p>
-                    </div>
-                    <div className="p-1">
-                      <Link
-                        href="/account"
-                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary transition-colors "
-                      >
-                        My Account
-                      </Link>
-                      <Link
-                        href="/account/orders"
-                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary transition-colors"
-                      >
-                        My Orders
-                      </Link>
-                      {isAdmin() && (
+
+                  {dropdownOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border bg-card shadow-lg z-50">
+                      <div className="p-3 border-b">
+                        <p className="text-sm font-medium truncate">
+                          {user?.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {user?.email}
+                        </p>
+                      </div>
+                      <div className="p-1">
                         <Link
-                          href="/admin"
-                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary transition-colors text-accent"
+                          href="/account"
+                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary transition-colors "
                         >
-                          Admin Panel
+                          My Account
                         </Link>
-                      )}
-                      <button
-                        onClick={logout}
-                        className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary transition-colors text-destructive cursor-pointer"
-                      >
-                        Sign Out
-                      </button>
+                        <Link
+                          href="/account/orders"
+                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary transition-colors"
+                        >
+                          My Orders
+                        </Link>
+                        {isAdmin() && (
+                          <Link
+                            href="/admin"
+                            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary transition-colors text-accent"
+                          >
+                            Admin Panel
+                          </Link>
+                        )}
+                        <button
+                          onClick={logout}
+                          className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary transition-colors text-destructive cursor-pointer"
+                        >
+                          Sign Out
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ) : (
                 <Link
