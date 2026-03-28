@@ -1,22 +1,14 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { TrendingUp, Download, FileText } from "lucide-react";
-
+import { Download, FileText } from "lucide-react";
 // import { formatPrice } from "@/lib/utils";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
+import Chart from "react-apexcharts";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
+import { TrendingUp, TrendingDown, Wallet } from "lucide-react";
 
 const PERIODS = [
   { label: "Today", value: "daily" },
@@ -95,7 +87,32 @@ export default function RevenueChart() {
     }),
     { revenue: 0, cost: 0, profit: 0 },
   );
-
+  const stats = [
+    {
+      label: "Revenue",
+      value: totals.revenue,
+      icon: TrendingUp,
+      bg: "bg-blue-500/10",
+      text: "text-blue-600",
+      iconBg: "bg-blue-500/20",
+    },
+    {
+      label: "Cost",
+      value: totals.cost,
+      icon: TrendingDown,
+      bg: "bg-red-500/10",
+      text: "text-red-600",
+      iconBg: "bg-red-500/20",
+    },
+    {
+      label: "Profit",
+      value: totals.profit,
+      icon: Wallet,
+      bg: "bg-green-500/10",
+      text: "text-green-600",
+      iconBg: "bg-green-500/20",
+    },
+  ];
   const formatDateLabel = (dateStr) => {
     return new Date(dateStr).toLocaleDateString("en-GB", {
       day: "numeric",
@@ -154,6 +171,59 @@ export default function RevenueChart() {
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const checkDark = () => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    };
+
+    checkDark();
+
+    const observer = new MutationObserver(checkDark);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const chartOptions = {
+    chart: {
+      type: "bar",
+      toolbar: { show: false },
+    },
+
+   
+    tooltip: {
+      theme: isDark ? "dark" : "light", // ✅ fix tooltip
+      style: {
+        fontSize: "12px",
+      },
+    },
+
+    xaxis: {
+      categories: ["Revenue", "Cost", "Profit"],
+    },
+
+    colors: ["#3b82f6", "#ef4444", "#22c55e"],
+
+    plotOptions: {
+      bar: {
+        borderRadius: 6,
+        distributed: true,
+      },
+    },
+  };
+
+  const chartSeries = [
+    {
+      name: "Amount",
+      data: [totals.revenue, totals.cost, totals.profit],
+    },
+  ];
 
   return (
     <div className="p-6 rounded-2xl border bg-card">
@@ -268,16 +338,21 @@ export default function RevenueChart() {
 
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-3 mb-6">
-        {[
-          { label: "Revenue", value: totals.revenue, color: "text-blue-500" },
-          { label: "Cost", value: totals.cost, color: "text-red-500" },
-          { label: "Profit", value: totals.profit, color: "text-green-500" },
-        ].map(({ label, value, color }) => (
-          <div key={label} className="p-3 rounded-xl border bg-secondary/30">
-            <p className="text-xs text-muted-foreground">{label}</p>
-            <p className={`font-semibold text-sm mt-0.5 ${color}`}>
-              {formatPrice(value)}
-            </p>
+        {stats.map(({ label, value, icon: Icon, bg, text, iconBg }) => (
+          <div
+            key={label}
+            className={`p-4 rounded-2xl border ${bg} flex items-center justify-between`}
+          >
+            <div>
+              <p className="text-xs text-muted-foreground">{label}</p>
+              <p className={`font-semibold text-lg mt-1 ${text}`}>
+                {formatPrice(value)}
+              </p>
+            </div>
+
+            <div className={`p-2 rounded-xl ${iconBg}`}>
+              <Icon className={`w-4 h-4 ${text}`} />
+            </div>
           </div>
         ))}
       </div>
@@ -286,31 +361,12 @@ export default function RevenueChart() {
       {isLoading ? (
         <div className="h-48 shimmer rounded-xl" />
       ) : (
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={chartData} barGap={2}>
-            <XAxis
-              dataKey="label"
-              tick={{ fontSize: 10 }}
-              tickLine={false}
-              axisLine={false}
-            />
-            <YAxis
-              tick={{ fontSize: 10 }}
-              tickLine={false}
-              axisLine={false}
-              tickFormatter={(v) => `৳${(v / 1000).toFixed(0)}k`}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend
-              iconType="circle"
-              iconSize={8}
-              wrapperStyle={{ fontSize: "11px", paddingTop: "12px" }}
-            />
-            <Bar dataKey="Revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="Cost" fill="#ef4444" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="Profit" fill="#22c55e" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+        <Chart
+          options={chartOptions}
+          series={chartSeries}
+          type="bar"
+          height={260}
+        />
       )}
     </div>
   );
