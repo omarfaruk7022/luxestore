@@ -57,7 +57,7 @@ export const createOrder = async (req) => {
       product.sold += item.quantity;
       await product.save();
 
-      const price = product.discountPrice || product.price;
+      const price = variant.discountPrice || variant.price;
       subtotal += price * item.quantity;
 
       orderItems.push({
@@ -69,6 +69,7 @@ export const createOrder = async (req) => {
         colorHex: variant.colorHex,
         quantity: item.quantity,
         price,
+        purchasePrice: variant.purchasePrice,
       });
     }
 
@@ -158,7 +159,7 @@ export const getOrder = async (req, id) => {
 // @route   PUT /api/orders/:id/cancel
 // @access  Private
 export const cancelOrder = async (req, id) => {
-    console.log("1.  starting");
+  console.log("1.  starting");
 
   try {
     console.log("1. connecting db");

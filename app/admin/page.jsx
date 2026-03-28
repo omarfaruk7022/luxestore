@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import { formatPrice, formatDate, ORDER_STATUS_COLORS, cn } from '@/lib/utils';
+import RevenueChart from '@/components/admin/RevenueChart';
 
 function StatCard({ title, value, icon: Icon, change, color, delay = 0 }) {
   return (
@@ -75,12 +76,13 @@ export default function AdminDashboard() {
   const STAT_CARDS = [
     { title: 'Total Revenue', value: isLoading ? '...' : formatPrice(stats.totalRevenue || 0), icon: DollarSign, color: 'bg-emerald-500', change: '+12%', delay: 0 },
     { title: 'Total Orders', value: isLoading ? '...' : stats.totalOrders?.toLocaleString() || '0', icon: ShoppingCart, color: 'bg-blue-500', change: '+8%', delay: 0.05 },
-    { title: 'Products', value: isLoading ? '...' : stats.totalProducts?.toLocaleString() || '0', icon: Package, color: 'bg-violet-500', delay: 0.1 },
+    { title: 'Total Profit', value: isLoading ? '...' : formatPrice(stats.totalProfit || 0), icon: Package, color: 'bg-violet-500', delay: 0.1 },
     { title: 'Customers', value: isLoading ? '...' : stats.totalUsers?.toLocaleString() || '0', icon: Users, color: 'bg-orange-500', change: '+5%', delay: 0.15 },
   ];
 
+
   return (
-    <div className="space-y-8 max-w-7xl">
+    <div className="space-y-8 max-w-full">
       <div>
         <h1 className="font-display text-3xl font-light">Dashboard</h1>
         <p className="text-muted-foreground text-sm mt-1">Overview of your store performance</p>
@@ -117,7 +119,8 @@ export default function AdminDashboard() {
 
       <div className="grid lg:grid-cols-[1fr_340px] gap-6">
         {/* Revenue chart */}
-        <motion.div
+        <RevenueChart />
+        {/* <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -131,7 +134,7 @@ export default function AdminDashboard() {
             <TrendingUp size={18} className="text-accent" />
           </div>
           <MiniBarChart data={dailyRevenue} />
-        </motion.div>
+        </motion.div> */}
 
         {/* Top products */}
         <motion.div
@@ -168,7 +171,7 @@ export default function AdminDashboard() {
                   <p className="text-xs font-medium truncate">{product.name}</p>
                   <p className="text-xs text-muted-foreground">{product.sold} sold · ★{product.rating?.toFixed(1)}</p>
                 </div>
-                <p className="text-xs font-semibold shrink-0">{formatPrice(product.price)}</p>
+                <p className="text-xs font-semibold shrink-0">{formatPrice(product.basePrice)}</p>
               </div>
             ))}
           </div>

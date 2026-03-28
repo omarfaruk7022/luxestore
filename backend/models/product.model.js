@@ -4,8 +4,12 @@ const variantSchema = new mongoose.Schema({
   size: { type: String, required: true },
   color: { type: String, required: true },
   colorHex: { type: String, default: "#000000" },
+  images: [{ type: String }],
   stock: { type: Number, required: true, default: 0 },
   sku: { type: String },
+  purchasePrice: { type: Number, required: true, min: 0, default: 0 },
+  price: { type: Number, required: true, min: 0 },
+  discountPrice: { type: Number, default: null },
 });
 
 const reviewSchema = new mongoose.Schema(
@@ -29,8 +33,7 @@ const productSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
-    price: { type: Number, required: true, min: 0 },
-    discountPrice: { type: Number, default: null },
+    basePrice: { type: Number, default: 0 },
     images: [{ type: String }],
     variants: [variantSchema],
     reviews: [reviewSchema],
@@ -50,9 +53,15 @@ const productSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// Calculate total stock before saving
 productSchema.pre("save", function (next) {
   this.totalStock = this.variants.reduce((sum, v) => sum + v.stock, 0);
+
+  if (this.variants.length > 0) {
+    this.basePrice = Math.min(
+      ...this.variants.map((v) => v.discountPrice || v.price),
+    );
+  }
+
   if (this.reviews.length > 0) {
     this.rating =
       this.reviews.reduce((sum, r) => sum + r.rating, 0) / this.reviews.length;

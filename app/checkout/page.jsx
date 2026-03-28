@@ -306,7 +306,9 @@ export default function CheckoutPage() {
                           </p>
                         </div>
                         <p className="text-sm font-semibold shrink-0">
-                          {formatPrice(item.price * item.quantity)}
+                          {formatPrice(
+                            (item.discountPrice || item.price) * item.quantity,
+                          )}
                         </p>
                       </div>
                     ))}
@@ -395,7 +397,9 @@ export default function CheckoutPage() {
                       </p>
                     </div>
                     <p className="text-xs font-semibold">
-                      {formatPrice(item.price * item.quantity)}
+                      {formatPrice(
+                        (item.discountPrice || item.price) * item.quantity,
+                      )}
                     </p>
                   </div>
                 ))}

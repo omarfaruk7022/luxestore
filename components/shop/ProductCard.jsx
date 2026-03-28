@@ -133,14 +133,34 @@ export default function ProductCard({ product, index = 0, filtersOpen }) {
 
           <div className="flex items-center justify-between">
             <div className="flex items-baseline gap-2">
-              <span className="font-semibold">
-                {formatPrice(product.discountPrice || product.price)}
-              </span>
-              {product.discountPrice && (
-                <span className="text-xs text-muted-foreground line-through">
-                  {formatPrice(product.price)}
-                </span>
-              )}
+              {(() => {
+                const lowestVariant = product.variants?.reduce(
+                  (min, v) =>
+                    (v.discountPrice || v.price) <
+                    (min.discountPrice || min.price)
+                      ? v
+                      : min,
+                  product.variants[0],
+                );
+                const finalPrice =
+                  lowestVariant?.discountPrice || lowestVariant?.price;
+                const originalPrice = lowestVariant?.discountPrice
+                  ? lowestVariant?.price
+                  : null;
+
+                return (
+                  <>
+                    <span className="font-semibold">
+                      {finalPrice ? formatPrice(finalPrice) : "TBA"}
+                    </span>
+                    {originalPrice && (
+                      <span className="text-xs text-muted-foreground line-through">
+                        {formatPrice(originalPrice)}
+                      </span>
+                    )}
+                  </>
+                );
+              })()}
             </div>
 
             {product.numReviews > 0 && (
@@ -158,10 +178,12 @@ export default function ProductCard({ product, index = 0, filtersOpen }) {
           </div>
         </div>
       </Link>
-      {showQuickView && <QuickViewModal product={product} onClose={() => setShowQuickView(false)} />}
+      {showQuickView && (
+        <QuickViewModal
+          product={product}
+          onClose={() => setShowQuickView(false)}
+        />
+      )}
     </motion.div>
   );
-  
 }
-
-

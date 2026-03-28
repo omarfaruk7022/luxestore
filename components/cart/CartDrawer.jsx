@@ -26,8 +26,7 @@ export default function CartDrawer() {
 
   // const items = cart?.items || [];
 
-
-  console.log(items)
+  console.log(items);
   return (
     <AnimatePresence>
       {isOpen && (
@@ -130,7 +129,7 @@ export default function CartDrawer() {
                         {item.size} · {item.color}
                       </p>
                       <p className="text-sm font-semibold mt-1">
-                        {formatPrice(item.price)}
+                        {formatPrice(item.discountPrice || item.price)}
                       </p>
                       <div className="flex items-center gap-2 mt-2">
                         <button

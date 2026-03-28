@@ -9,6 +9,7 @@ const orderItemSchema = new mongoose.Schema({
   colorHex: String,
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
+  purchasePrice: { type: Number, required: true },
 });
 
 const shippingSchema = new mongoose.Schema({

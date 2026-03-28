@@ -22,5 +22,5 @@ export async function DELETE(req, { params }) {
   const admin = adminOnly(auth.user);
   if (!admin.success) return admin;
   const { id } = await params;
-  return deleteProduct(req, id);
+  return deleteProduct(id);
 }

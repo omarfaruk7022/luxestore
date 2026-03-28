@@ -100,8 +100,11 @@ export default function ProductDetailPage() {
     (v) => v.size === selectedSize && v.color === selectedColor,
   );
 
-  const discount = getDiscountPercent(product.price, product.discountPrice);
+  console.log(currentVariant)
 
+  const discount = currentVariant
+    ? getDiscountPercent(currentVariant.price, currentVariant.discountPrice)
+    : 0;
   const handleAddToCart = async () => {
     // if (!isAuthenticated()) {
     //   toast.error("Please sign in first");
@@ -125,8 +128,8 @@ export default function ProductDetailPage() {
       color: selectedColor,
       colorHex: currentVariant.colorHex,
       quantity,
-      price: product.price,
-      discountPrice: product.discountPrice,
+      price: currentVariant.price,
+      discountPrice: currentVariant.discountPrice,
       image: product.images?.[0],
     });
   };
@@ -252,14 +255,40 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Price */}
+            {/* Price */}
             <div className="flex items-baseline gap-3">
-              <span className="font-display text-3xl font-medium">
-                {formatPrice(product.discountPrice || product.price)}
-              </span>
-              {product.discountPrice && (
-                <span className="text-lg text-muted-foreground line-through">
-                  {formatPrice(product.price)}
-                </span>
+              {currentVariant ? (
+                <>
+                  <span className="font-display text-3xl font-medium">
+                    {formatPrice(
+                      currentVariant.discountPrice || currentVariant.price,
+                    )}
+                  </span>
+                  {currentVariant.discountPrice && (
+                    <span className="text-lg text-muted-foreground line-through">
+                      {formatPrice(currentVariant.price)}
+                    </span>
+                  )}
+                  {currentVariant.discountPrice && (
+                    <span className="text-sm font-medium text-accent">
+                      -
+                      {getDiscountPercent(
+                        currentVariant.price,
+                        currentVariant.discountPrice,
+                      )}
+                      %
+                    </span>
+                  )}
+                </>
+              ) : (
+                <>
+                  <span className="font-display text-3xl font-medium">
+                    {formatPrice(product.basePrice)}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    Select variant for exact price
+                  </span>
+                </>
               )}
             </div>
 

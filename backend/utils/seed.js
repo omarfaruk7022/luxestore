@@ -62,7 +62,7 @@ const categories = [
   },
 ];
 
-const makeVariants = (colors) => {
+const makeVariants = (colors, basePrice = 0, purchasePrice = 0) => {
   const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
   return sizes.flatMap((size) =>
     colors.map((c) => ({
@@ -70,6 +70,9 @@ const makeVariants = (colors) => {
       color: c.name,
       colorHex: c.hex,
       stock: Math.floor(Math.random() * 50) + 5,
+      purchasePrice,
+      price: basePrice,
+      discountPrice: null,
     })),
   );
 };
@@ -143,7 +146,7 @@ async function seed() {
       price: 450,
       discountPrice: 380,
       images: [UNSPLASH_SHIRTS[0], UNSPLASH_SHIRTS[1]],
-      variants: makeVariants(colorSets.neutral),
+      variants: makeVariants(colorSets.neutral, 450, 380),
       isFeatured: true,
       isBestSeller: true,
       material: "95% Cotton, 5% Elastane",
@@ -159,7 +162,7 @@ async function seed() {
       price: 650,
       discountPrice: 520,
       images: [UNSPLASH_SHIRTS[2], UNSPLASH_SHIRTS[3]],
-      variants: makeVariants(colorSets.neutral),
+      variants: makeVariants(colorSets.neutral, 650, 520),
       isFeatured: true,
       isNewArrival: true,
       material: "88% Polyester, 12% Spandex",
@@ -175,7 +178,7 @@ async function seed() {
       price: 550,
       discountPrice: null,
       images: [UNSPLASH_PANTS[0], UNSPLASH_PANTS[1]],
-      variants: makeVariants(colorSets.warm),
+      variants: makeVariants(colorSets.warm, 550, 500),
       isFeatured: true,
       isBestSeller: true,
       material: "100% Combed Cotton",
@@ -191,7 +194,7 @@ async function seed() {
       price: 850,
       discountPrice: 720,
       images: [UNSPLASH_PANTS[2], UNSPLASH_PANTS[3]],
-      variants: makeVariants(colorSets.cool),
+      variants: makeVariants(colorSets.cool, 850, 720),
       isFeatured: true,
       isNewArrival: true,
       material: "92% Modal, 8% Elastane",
@@ -207,7 +210,7 @@ async function seed() {
       price: 480,
       discountPrice: 400,
       images: [UNSPLASH_SHIRTS[4], UNSPLASH_SHIRTS[5]],
-      variants: makeVariants(colorSets.neutral),
+      variants: makeVariants(colorSets.neutral, 480, 400),
       isFeatured: false,
       isBestSeller: true,
       material: "100% Supima Cotton",
@@ -223,7 +226,7 @@ async function seed() {
       price: 1200,
       discountPrice: 990,
       images: [UNSPLASH_SHIRTS[0], UNSPLASH_SHIRTS[2]],
-      variants: makeVariants(colorSets.neutral),
+      variants: makeVariants(colorSets.neutral, 1200, 990),
       isBestSeller: true,
       material: "95% Pima Cotton, 5% Spandex",
       description:
@@ -238,7 +241,7 @@ async function seed() {
       price: 1400,
       discountPrice: 1150,
       images: [UNSPLASH_PANTS[4], UNSPLASH_PANTS[0]],
-      variants: makeVariants(colorSets.warm),
+      variants: makeVariants(colorSets.warm, 1400, 1150),
       isFeatured: true,
       isNewArrival: true,
       material: "60% Cotton, 40% Polyester",
@@ -254,7 +257,7 @@ async function seed() {
       price: 1800,
       discountPrice: 1500,
       images: [UNSPLASH_SHIRTS[3], UNSPLASH_PANTS[2]],
-      variants: makeVariants(colorSets.neutral),
+      variants: makeVariants(colorSets.neutral, 1800, 1500),
       isNewArrival: true,
       material: "80% Merino Wool, 20% Nylon",
       description:
@@ -269,7 +272,7 @@ async function seed() {
       price: 750,
       discountPrice: 620,
       images: [UNSPLASH_PANTS[3], UNSPLASH_PANTS[1]],
-      variants: makeVariants(colorSets.neutral),
+      variants: makeVariants(colorSets.neutral, 750, 620),
       isFeatured: true,
       isBestSeller: true,
       material: "80% Nylon, 20% Spandex",
@@ -285,7 +288,7 @@ async function seed() {
       price: 580,
       discountPrice: 480,
       images: [UNSPLASH_SHIRTS[1], UNSPLASH_SHIRTS[4]],
-      variants: makeVariants(colorSets.cool),
+      variants: makeVariants(colorSets.cool, 580, 480),
       isNewArrival: true,
       material: "95% Bamboo Viscose, 5% Elastane",
       description:
@@ -300,7 +303,7 @@ async function seed() {
       price: 900,
       discountPrice: 750,
       images: [UNSPLASH_PANTS[4], UNSPLASH_PANTS[3]],
-      variants: makeVariants(colorSets.warm),
+      variants: makeVariants(colorSets.warm, 900, 750),
       isFeatured: false,
       material: "100% Cotton Terry",
       description:
@@ -315,7 +318,7 @@ async function seed() {
       price: 680,
       discountPrice: null,
       images: [UNSPLASH_SHIRTS[5], UNSPLASH_SHIRTS[2]],
-      variants: makeVariants(colorSets.neutral),
+      variants: makeVariants(colorSets.neutral, 680, 900),
       isNewArrival: true,
       material: "92% Polyester, 8% Elastane",
       description:
@@ -329,8 +332,6 @@ async function seed() {
   console.log("📦 Products seeded");
 
   console.log("\n✅ Seed complete!");
-  console.log("   Admin → admin@luxestore.com / admin123");
-  console.log("   User  → jane@example.com / user1234");
   process.exit(0);
 }
 

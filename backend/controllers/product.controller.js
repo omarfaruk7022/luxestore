@@ -160,18 +160,17 @@ export const updateProduct = async (req, id) => {
     await connectDB();
     const body = await req.json();
 
-    const product = await Product.findByIdAndUpdate(id, body, {
-      new: true,
-      runValidators: true,
-    }).populate("category", "name slug");
-    console.log(product);
-
+    const product = await Product.findById(id);
     if (!product) {
       return NextResponse.json(
         { success: false, message: "Product not found" },
         { status: 404 },
       );
     }
+
+    Object.assign(product, body);
+    await product.save();
+    await product.populate("category", "name slug");
 
     return NextResponse.json({
       success: true,

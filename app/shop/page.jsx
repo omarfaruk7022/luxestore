@@ -115,7 +115,7 @@ function FilterContent({
 function ShopContent() {
   const searchParams = useSearchParams();
 
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(
     searchParams.get("category") || "",
   );
@@ -189,7 +189,7 @@ function ShopContent() {
     <div className="min-h-screen pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
           <div>
             <h1 className="font-display text-4xl font-light">
               {search

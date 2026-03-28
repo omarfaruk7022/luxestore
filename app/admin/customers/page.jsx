@@ -162,7 +162,7 @@ export default function AdminCustomersPage() {
                             }
                             disabled={togglingId === user._id}
                             className={cn(
-                              "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] md:text-xs font-medium transition-colors disabled:opacity-50",
+                              "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] md:text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer",
                               user.isActive
                                 ? "hover:bg-destructive/10 hover:text-destructive"
                                 : "hover:bg-green-100 dark:hover:bg-green-900/20 hover:text-green-700",
