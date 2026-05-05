@@ -17,6 +17,7 @@ import {
 import { useTheme } from "next-themes";
 import useAuthStore from "@/store/authStore";
 import useCartStore from "@/store/cartStore";
+import { useStore } from "@/components/layout/StoreProvider";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -37,6 +38,7 @@ export default function Navbar() {
   const { theme, setTheme } = useTheme();
   const { user, logout, isAuthenticated, isAdmin } = useAuthStore();
   const { itemCount, setOpen } = useCartStore();
+  const { settings } = useStore();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -70,11 +72,11 @@ export default function Navbar() {
             <Link href="/" className="flex items-center gap-2 group">
               <div className="w-8 h-8 rounded-full bg-foreground flex items-center justify-center">
                 <span className="text-background text-xs font-display font-bold">
-                  L
+                  {(settings.storeName || "L")[0].toUpperCase()}
                 </span>
               </div>
               <span className="font-display text-xl font-semibold tracking-wide">
-                LuxeWear
+                {settings.storeName || "LuxeWear"}
               </span>
             </Link>
 

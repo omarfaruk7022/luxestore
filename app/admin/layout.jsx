@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Package, ShoppingCart, Users, Tag, BarChart2, ChevronRight, ArrowLeft, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Users, Tag, BarChart2, ChevronRight, ArrowLeft, Menu, X, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '@/store/authStore';
 import { cn } from '@/lib/utils';
@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { label: 'Orders', href: '/admin/orders', icon: ShoppingCart },
   { label: 'Customers', href: '/admin/customers', icon: Users },
   { label: 'Categories', href: '/admin/categories', icon: Tag },
+  { label: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
 export default function AdminLayout({ children }) {

@@ -260,7 +260,7 @@ function ShopContent() {
           {/* Products grid */}
           <div className="flex-1 min-w-0">
             {isLoading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 {Array(12)
                   .fill(null)
                   .map((_, i) => (
